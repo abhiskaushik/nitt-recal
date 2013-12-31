@@ -1,0 +1,111 @@
+/*
+Theme Name: Omega Child
+Theme URI: http://themehall.com/omega
+Author: Karthik Nagaraj
+Author URI: http://themehall.com/about
+Version: 0.0.1
+Template: omega
+License: GNU General Public License
+License URI: license.txt
+Tags: white, light, gray, two-columns, one-column, right-sidebar, left-sidebar, flexible-width, full-width-template, theme-options, custom-menu, threaded-comments, sticky-post,featured-image-header, flexible-header, translation-ready
+
+Omega WordPress theme, Copyright (C) 2013 themehall.com
+Omega WordPress theme is licensed under the GPL.
+
+ */
+
+@import url("../omega/style.css");
+/* =Theme customization starts here
+-------------------------------------------------------------- */
+body {
+  color: #000;
+}
+
+a {
+  color: #4186D3;
+}
+
+blockquote {
+  font-size: 1.375em;
+  color: LightSlateGray;
+}
+
+.site-title img {
+  height: 3em;
+  align: left;
+}
+
+input,
+select,
+textarea {
+  padding: 5px;
+}
+
+.site-header {
+  background-color: none;
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+  background-image: url("/wp-content/uploads/2013/12/115174115_92a893011f_o.jpg");
+  height: 200px;
+}
+
+.title-area {
+  padding: 0px 0px;
+  font-variant: small-caps;
+}
+
+.site-title a,
+.site-title a:hover {
+  visibility: hidden;
+}
+
+.site-description {
+  color: DarkSlateGray;
+  font-size: 30px;
+}
+
+.omega-nav-menu .menu-item {
+  /*font-size: 20px;*/
+  font-size: 16px; 
+}       
+
+.omega-nav-menu a {
+  padding: 5px 18px;
+}
+
+.omega-nav-menu > .menu-item { 
+  vertical-align: middle;
+}
+
+.entry-comments,
+#respond {
+  background: none;
+}
+
+.nav-primary {
+  /*background-image: url("/wp-content/uploads/2013/12/debut_dark.png");*/
+  /*background-color: #444;*/
+  /*background-color: PowderBlue;*/
+  background-color: CornflowerBlue;
+  top: 0;
+  position: fixed;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.menu_logo {
+  /*height: 62px;*/
+  height: 50px;
+}
+
+.omega-nav-menu a {
+  color: Moccasin;
+}
+
+.omega-nav-menu .sub-menu a,
+.omega-nav-menu .children a {
+  color: #999;
+}
+
+/* Move the admin bar to the bottom to avoid conflicting with the menu bar */
+#wpadminbar { top:inherit; bottom:0; } 
