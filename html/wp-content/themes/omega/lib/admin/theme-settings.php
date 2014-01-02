@@ -2,74 +2,66 @@
 /**
  * Handles the display and functionality of the theme settings page. This provides the needed hooks and
  * meta box calls for developers to create any number of theme settings needed. This file is only loaded if 
- * the theme supports the 'hybrid-core-theme-settings' feature.
+ * the theme supports the 'omega-theme-settings' feature.
  *
  * Provides the ability for developers to add custom meta boxes to the theme settings page by using the 
  * add_meta_box() function.  Developers should register their meta boxes on the 'add_meta_boxes' hook 
  * and register the meta box for 'appearance_page_theme-settings'.  To validate/sanitize data from 
- * custom settings, devs should use the 'sanitize_option_{$prefix}_theme_settings' filter hook.
- *
- * @package    HybridCore
- * @subpackage Admin
- * @author     Justin Tadlock <justin@justintadlock.com>
- * @copyright  Copyright (c) 2008 - 2013, Justin Tadlock
- * @link       http://themehybrid.com/hybrid-core
- * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * custom settings, devs should use the 'sanitize_option_omega_theme_settings' filter hook.
  */
 
 /* Hook the settings page function to 'admin_menu'. */
-add_action( 'admin_menu', 'hybrid_settings_page_init' );
+add_action( 'admin_menu', 'omega_settings_page_init' );
 
 /**
  * Initializes all the theme settings page functionality. This function is used to create the theme settings 
  * page, then use that as a launchpad for specific actions that need to be tied to the settings page.
  *
  * @since 0.7.0
- * @global string $hybrid The global theme object.
+ * @global string $omega The global theme object.
  * @return void
  */
-function hybrid_settings_page_init() {
-	global $hybrid;
+function omega_settings_page_init() {
+	global $omega;
 
 	/* Get theme information. */
 	$theme = wp_get_theme( get_template() );
-	$prefix = hybrid_get_prefix();
 
 	/* Register theme settings. */
 	register_setting(
-		"{$prefix}_theme_settings",		// Options group.
-		"{$prefix}_theme_settings",		// Database option.
-		'hybrid_save_theme_settings'	// Validation callback function.
+		'omega_theme_settings',		// Options group.
+		'omega_theme_settings',		// Database option.
+		'omega_save_theme_settings'	// Validation callback function.
 	);
 
 	/* Create the theme settings page. */
-	$hybrid->settings_page = add_theme_page(
-		sprintf( esc_html__( '%s Theme Settings', 'hybrid-core' ), $theme->get( 'Name' ) ),	// Settings page name.
-		esc_html__( 'Theme Settings', 'hybrid-core' ),				// Menu item name.
-		hybrid_settings_page_capability(),					// Required capability.
+	$omega->settings_page = add_theme_page(
+		sprintf( esc_html__( 'Theme Settings', 'omega' ), $theme->get( 'Name' ) ),	// Settings page name.
+		esc_html__( 'Theme Settings', 'omega' ),				// Menu item name.
+		omega_settings_page_capability(),					// Required capability.
 		'theme-settings',							// Screen name.
-		'hybrid_settings_page'						// Callback function.
+		'omega_settings_page'						// Callback function.
 	);
 
 	/* Check if the settings page is being shown before running any functions for it. */
-	if ( !empty( $hybrid->settings_page ) ) {
+	if ( !empty( $omega->settings_page ) ) {
 
 		/* Filter the settings page capability so that it recognizes the 'edit_theme_options' cap. */
-		add_filter( "option_page_capability_{$prefix}_theme_settings", 'hybrid_settings_page_capability' );
+		add_filter( "option_page_capability_omega_theme_settings", 'omega_settings_page_capability' );
 
 		/* Add help tabs to the theme settings page. */
-		add_action( "load-{$hybrid->settings_page}", 'hybrid_settings_page_help' );
+		add_action( "load-{$omega->settings_page}", 'omega_settings_page_help' );
 
 		/* Load the theme settings meta boxes. */
-		add_action( "load-{$hybrid->settings_page}", 'hybrid_load_settings_page_meta_boxes' );
+		add_action( "load-{$omega->settings_page}", 'omega_load_settings_page_meta_boxes' );
 
 		/* Create a hook for adding meta boxes. */
-		add_action( "load-{$hybrid->settings_page}", 'hybrid_settings_page_add_meta_boxes' );
+		add_action( "load-{$omega->settings_page}", 'omega_settings_page_add_meta_boxes' );
 
 		/* Load the JavaScript and stylesheets needed for the theme settings screen. */
-		add_action( 'admin_enqueue_scripts', 'hybrid_settings_page_enqueue_scripts' );
-		add_action( 'admin_enqueue_scripts', 'hybrid_settings_page_enqueue_styles' );
-		add_action( "admin_footer-{$hybrid->settings_page}", 'hybrid_settings_page_load_scripts' );
+		add_action( 'admin_enqueue_scripts', 'omega_settings_page_enqueue_scripts' );
+		add_action( 'admin_enqueue_scripts', 'omega_settings_page_enqueue_styles' );
+		add_action( "admin_footer-{$omega->settings_page}", 'omega_settings_page_load_scripts' );
 	}
 }
 
@@ -79,8 +71,8 @@ function hybrid_settings_page_init() {
  * @since 1.2.0
  * @return string
  */
-function hybrid_settings_page_capability() {
-	return apply_filters( hybrid_get_prefix() . '_settings_capability', 'edit_theme_options' );
+function omega_settings_page_capability() {
+	return apply_filters( 'omega_settings_capability', 'edit_theme_options' );
 }
 
 /**
@@ -89,10 +81,10 @@ function hybrid_settings_page_capability() {
  * @since 1.2.0
  * @return string
  */
-function hybrid_get_settings_page_name() {
-	global $hybrid;
+function omega_get_settings_page_name() {
+	global $omega;
 
-	return ( isset( $hybrid->settings_page ) ? $hybrid->settings_page : 'appearance_page_theme-settings' );
+	return ( isset( $omega->settings_page ) ? $omega->settings_page : 'appearance_page_theme-settings' );
 }
 
 /**
@@ -104,9 +96,9 @@ function hybrid_get_settings_page_name() {
  * @since 1.2.0
  * @return void
  */
-function hybrid_settings_page_add_meta_boxes() {
+function omega_settings_page_add_meta_boxes() {
 
-	do_action( 'add_meta_boxes', hybrid_get_settings_page_name() );
+	do_action( 'add_meta_boxes', omega_get_settings_page_name() );
 }
 
 /**
@@ -116,37 +108,38 @@ function hybrid_settings_page_add_meta_boxes() {
  * @since 1.2.0
  * @return void
  */
-function hybrid_load_settings_page_meta_boxes() {
+function omega_load_settings_page_meta_boxes() {
 
 	/* Get theme-supported meta boxes for the settings page. */
-	$supports = get_theme_support( 'hybrid-core-theme-settings' );
+	$supports = get_theme_support( 'omega-theme-settings' );
+
+	require_once( trailingslashit( OMEGA_ADMIN ) . 'meta-box-theme-options.php' );
+	require_once( trailingslashit( OMEGA_ADMIN ) . 'meta-box-theme-comments.php' );
+	require_once( trailingslashit( OMEGA_ADMIN ) . 'meta-box-theme-archives.php' );
+	require_once( trailingslashit( OMEGA_ADMIN ) . 'meta-box-theme-scripts.php' );
 
 	/* If there are any supported meta boxes, load them. */
 	if ( is_array( $supports[0] ) ) {
 
 		/* Load the 'About' meta box if it is supported. */
 		if ( in_array( 'about', $supports[0] ) )
-			require_once( trailingslashit( HYBRID_ADMIN ) . 'meta-box-theme-about.php' );
-
-		/* Load the 'Footer' meta box if it is supported. */
-		if ( in_array( 'footer', $supports[0] ) )
-			require_once( trailingslashit( HYBRID_ADMIN ) . 'meta-box-theme-footer.php' );
+			require_once( trailingslashit( OMEGA_ADMIN ) . 'meta-box-theme-about.php' );		
 	}
 }
 
 /**
  * Validation/Sanitization callback function for theme settings.  This just returns the data passed to it.  Theme
- * developers should validate/sanitize their theme settings on the "sanitize_option_{$prefix}_theme_settings" 
+ * developers should validate/sanitize their theme settings on the "sanitize_option_omega_theme_settings" 
  * hook.  This function merely exists for backwards compatibility.
  *
  * @since 0.7.0
  * @param array $settings An array of the theme settings passed by the Settings API for validation.
  * @return array $settings The array of theme settings.
  */
-function hybrid_save_theme_settings( $settings ) {
+function omega_save_theme_settings( $settings ) {
 
-	/* @deprecated 1.0.0. Developers should filter "sanitize_option_{$prefix}_theme_settings" instead. */
-	return apply_filters( hybrid_get_prefix() . '_validate_theme_settings', $settings );
+	/* @deprecated 1.0.0. Developers should filter "sanitize_option_omega_theme_settings" instead. */
+	return apply_filters( 'omega_validate_theme_settings', $settings );
 }
 
 /**
@@ -156,45 +149,44 @@ function hybrid_save_theme_settings( $settings ) {
  * @since 0.7.0
  * @return void
  */
-function hybrid_settings_page() {
+function omega_settings_page() {
 
 	/* Get the theme information. */
-	$prefix = hybrid_get_prefix();
 	$theme = wp_get_theme( get_template() );
 
-	do_action( "{$prefix}_before_settings_page" ); ?>
+	do_action( "omega_before_settings_page" ); ?>
 
 	<div class="wrap">
 
 		<?php screen_icon(); ?>
 		<h2>
-			<?php printf( __( 'Theme Settings', 'hybrid-core' ) ); // hence update ?>
-			<a href="<?php echo admin_url( 'customize.php' ); ?>" class="add-new-h2"><?php esc_html_e( 'Customize', 'hybrid-core' ); ?></a>
-			<?php do_action( "{$prefix}_child_theme" ); // hence add ?>
+			<?php printf( __( 'Theme Settings', 'omega' ) ); // hence update ?>
+			<a href="<?php echo admin_url( 'customize.php' ); ?>" class="add-new-h2"><?php esc_html_e( 'Customize', 'omega' ); ?></a>
+			<?php do_action( "omega_child_theme" ); // hence add ?>
 		</h2>
+		
 		<?php settings_errors(); ?>
 
-		<?php do_action( "{$prefix}_open_settings_page" ); ?>
+		<?php do_action( "omega_open_settings_page" ); ?>
 
-		<div class="hybrid-core-settings-wrap">
+		<div class="omega-settings-wrap">
 
 			<form method="post" action="options.php">
 
-				<?php settings_fields( "{$prefix}_theme_settings" ); ?>
+				<?php settings_fields( "omega_theme_settings" ); ?>
 				<?php wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false ); ?>
 				<?php wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false ); ?>
 
 				<div id="poststuff">
 
-					<div id="post-body" class="metabox-holder columns-2">
+					<div id="dashboard-widgets" class="metabox-holder columns-2">
 
-						<div id="postbox-container-1" class="postbox-container side">
-							<?php do_meta_boxes( hybrid_get_settings_page_name(), 'side', null ); ?>
+						<div class="postbox-container col-1 normal advanced">
+							<?php do_meta_boxes( omega_get_settings_page_name(), 'normal', null ); ?>
 						</div><!-- #postbox-container-1 -->
 
-						<div id="postbox-container-2" class="postbox-container normal advanced">
-							<?php do_meta_boxes( hybrid_get_settings_page_name(), 'normal', null ); ?>
-							<?php do_meta_boxes( hybrid_get_settings_page_name(), 'advanced', null ); ?>
+						<div class="postbox-container col-2 side">
+							<?php do_meta_boxes( omega_get_settings_page_name(), 'side', null ); ?>
 						</div><!-- #postbox-container-2 -->
 
 					</div><!-- #post-body -->
@@ -203,18 +195,19 @@ function hybrid_settings_page() {
 
 				</div><!-- #poststuff -->
 
-				<?php submit_button( esc_attr__( 'Update Settings', 'hybrid-core' ), 'primary', 'submit', false ); // hence updated ?>
+				<?php do_action('omega_admin_setting');?>
+				<?php submit_button( esc_attr__( 'Update Settings', 'omega' ), 'primary', 'submit', false ); // hence updated ?> &nbsp;
 				<input type="submit" class="reset-button button-secondary" name="reset" value="<?php esc_attr_e( 'Restore Defaults', 'omega' ); ?>" onclick="return confirm( '<?php print esc_js( __( 'Click OK to reset. Any theme settings will be lost!', 'omega' ) ); ?>' );" />
 
 			</form>
 
-		</div><!-- .hybrid-core-settings-wrap -->
+		</div><!-- .omega-settings-wrap -->
 
-		<?php do_action( "{$prefix}_close_settings_page" ); ?>
+		<?php do_action( "omega_close_settings_page" ); ?>
 
 	</div><!-- .wrap --><?php
 
-	do_action( "{$prefix}_after_settings_page" );
+	do_action( "omega_after_settings_page" );
 }
 
 /**
@@ -224,8 +217,8 @@ function hybrid_settings_page() {
  * @since 1.0.0
  * @return string
  */
-function hybrid_settings_field_id( $setting ) {
-	return hybrid_get_prefix() . '_theme_settings-' . sanitize_html_class( $setting );
+function omega_settings_field_id( $setting ) {
+	return 'omega_theme_settings-' . sanitize_html_class( $setting );
 }
 
 /**
@@ -235,8 +228,8 @@ function hybrid_settings_field_id( $setting ) {
  * @since 1.0.0
  * @return string
  */
-function hybrid_settings_field_name( $setting ) {
-	return hybrid_get_prefix() . "_theme_settings[{$setting}]";
+function omega_settings_field_name( $setting ) {
+	return "omega_theme_settings[{$setting}]";
 }
 
 /**
@@ -246,7 +239,7 @@ function hybrid_settings_field_name( $setting ) {
  * @since 1.3.0
  * @return void
  */
-function hybrid_settings_page_help() {
+function omega_settings_page_help() {
 
 	/* Get the parent theme data. */
 	$theme = wp_get_theme( get_template() );
@@ -261,11 +254,11 @@ function hybrid_settings_page_help() {
 
 		/* Add the Documentation URI. */
 		if ( !empty( $doc_uri ) )
-			$help .= '<li><a href="' . esc_url( $doc_uri ) . '">' . __( 'Documentation', 'hybrid-core' ) . '</a></li>';
+			$help .= '<li><a href="' . esc_url( $doc_uri ) . '">' . __( 'Documentation', 'omega' ) . '</a></li>';
 
 		/* Add the Support URI. */
 		if ( !empty( $support_uri ) )
-			$help .= '<li><a href="' . esc_url( $support_uri ) . '">' . __( 'Support', 'hybrid-core' ) . '</a></li>';
+			$help .= '<li><a href="' . esc_url( $support_uri ) . '">' . __( 'Support', 'omega' ) . '</a></li>';
 
 		/* Close the unordered list for the help text. */
 		$help .= '</ul>';
@@ -287,11 +280,11 @@ function hybrid_settings_page_help() {
  * @since 1.2.0
  * @return void
  */
-function hybrid_settings_page_enqueue_styles( $hook_suffix ) {
+function omega_settings_page_enqueue_styles( $hook_suffix ) {
 
 	/* Load admin stylesheet if on the theme settings screen. */
-	if ( $hook_suffix == hybrid_get_settings_page_name() )
-		wp_enqueue_style( 'hybrid-core-admin' );
+	if ( $hook_suffix == omega_get_settings_page_name() )
+		wp_enqueue_style( 'omega-admin' );
 }
 
 /**
@@ -302,9 +295,9 @@ function hybrid_settings_page_enqueue_styles( $hook_suffix ) {
  * @param string $hook_suffix The current page being viewed.
  * @return void
  */
-function hybrid_settings_page_enqueue_scripts( $hook_suffix ) {
+function omega_settings_page_enqueue_scripts( $hook_suffix ) {
 
-	if ( $hook_suffix == hybrid_get_settings_page_name() ){
+	if ( $hook_suffix == omega_get_settings_page_name() ){
 		wp_enqueue_script( 'common' );
 		wp_enqueue_script( 'wp-lists' );
 		wp_enqueue_script( 'postbox' );
@@ -318,12 +311,12 @@ function hybrid_settings_page_enqueue_scripts( $hook_suffix ) {
  * @since 0.7.0
  * @return void
  */
-function hybrid_settings_page_load_scripts() { ?>
+function omega_settings_page_load_scripts() { ?>
 	<script type="text/javascript">
 		//<![CDATA[
 		jQuery(document).ready( function($) {
 			$('.if-js-closed').removeClass('if-js-closed').addClass('closed');
-			postboxes.add_postbox_toggles( '<?php echo hybrid_get_settings_page_name(); ?>' );
+			postboxes.add_postbox_toggles( '<?php echo omega_get_settings_page_name(); ?>' );
 		});
 		//]]>
 	</script><?php

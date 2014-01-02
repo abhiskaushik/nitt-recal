@@ -12,11 +12,14 @@
 
 get_header(); ?>
 
-	<main  class="<?php echo apply_atomic( 'main_class', 'content' );?>" role="main" itemprop="mainContentOfPage">
+	<main  class="<?php echo omega_apply_atomic( 'main_class', 'content' );?>" <?php omega_attr( 'content' ); ?>>
 
 		<?php 
-		do_atomic( 'before_content' ); // omega_before_content 
+		omega_do_atomic( 'before_content' ); // omega_before_content 
 
+		if ( have_posts() ) : 
+
+			/* Start the Loop */ 
 			while ( have_posts() ) : the_post();
 
 				get_template_part( 'partials/content', 'page' );
@@ -25,7 +28,9 @@ get_header(); ?>
 
 			endwhile; // end of the loop. 
 		
-		do_atomic( 'after_content' ); // omega_after_content 
+		endif;
+		
+		omega_do_atomic( 'after_content' ); // omega_after_content 
 		?>
 
 	</main><!-- .content -->

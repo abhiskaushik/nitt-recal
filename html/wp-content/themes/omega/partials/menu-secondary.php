@@ -3,9 +3,9 @@
  * Secondary Menu Template
  */
 ?>	
-<nav class="nav-secondary" role="navigation" itemscope="itemscope" itemtype="http://schema.org/SiteNavigationElement">
+<nav class="nav-secondary" <?php omega_attr( 'menu' ); ?>>
 	
-	<?php do_atomic( 'before_secondary_menu' ); // omega_before_secondary_menu ?>
+	<?php omega_do_atomic( 'before_secondary_menu' ); // omega_before_secondary_menu ?>
 
 	<?php 
 	wp_nav_menu( array(
@@ -15,7 +15,7 @@
 		)); 
 	?>
 
-	<?php do_atomic( 'after_secondary_menu' ); // omega_after_secondary_menu ?>
+	<?php omega_do_atomic( 'after_secondary_menu' ); // omega_after_secondary_menu ?>
 
 	
 </nav><!-- .nav-secondary -->

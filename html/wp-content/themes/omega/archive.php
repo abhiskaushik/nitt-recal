@@ -7,7 +7,7 @@
 
 get_header(); ?>
 
-	<main  class="<?php echo apply_atomic( 'main_class', 'content' );?>" role="main" itemprop="mainContentOfPage" itemscope="itemscope" itemtype="http://schema.org/Blog">
+	<main  class="<?php echo apply_atomic( 'main_class', 'content' );?>" <?php omega_attr( 'content' ); ?>>
 
 		<?php do_atomic( 'before_content' ); // omega_before_content ?>
 

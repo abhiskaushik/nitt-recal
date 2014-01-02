@@ -2,21 +2,14 @@
 /**
  * The textarea customize control extends the WP_Customize_Control class.  This class allows 
  * developers to create textarea settings within the WordPress theme customizer.
- *
- * @package    Hybrid
- * @subpackage Classes
- * @author     Justin Tadlock <justin@justintadlock.com>
- * @copyright  Copyright (c) 2008 - 2013, Justin Tadlock
- * @link       http://themehybrid.com/hybrid-core
- * @license    http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- */
+  */
 
 /**
  * Textarea customize control class.
  *
  * @since 1.4.0
  */
-class Hybrid_Customize_Control_Textarea extends WP_Customize_Control {
+class Omega_Customize_Control_Textarea extends WP_Customize_Control {
 
 	/**
 	 * The type of customize control being rendered.

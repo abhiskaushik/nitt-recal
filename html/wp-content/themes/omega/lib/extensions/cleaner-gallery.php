@@ -15,11 +15,7 @@
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *
  * @package   CleanerGallery
- * @version   1.0.0
- * @author    Justin Tadlock <justin@justintadlock.com>
- * @copyright Copyright (c) 2008 - 2013, Justin Tadlock
- * @link      http://justintadlock.com/archives/2008/04/13/cleaner-wordpress-gallery-plugin
- * @license   http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * @version   0.9.0
  */
 
 /* Filter the post gallery shortcode output. */

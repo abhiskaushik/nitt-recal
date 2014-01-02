@@ -38,6 +38,19 @@ Copyright: @afarkas @jdalton @jon_neal @rem
 
 Changelog
 ---------
+
+0.9.2
+- fixed duplicate tag
+
+0.9.1
+- Add 2 child themes
+- files cleaned up
+- add featured widgets
+
+0.9.0
+- upgrade to HybridCore 2
+- forking HybridCore 2
+
 0.8.1   2013-10-24
 - update credit link
 - add mobile child theme
@@ -107,7 +120,7 @@ Changelog
 - fixed theme layout customizer
 
 0.3.2	2013-08-10
-- disabled hybrid_meta_template
+- disabled omega_meta_template
 - add archive theme setting
 
 0.3.1	2013-08-08

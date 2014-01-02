@@ -10,21 +10,26 @@
  * @subpackage Template
  */
 ?>
-<li id="comment-<?php comment_ID(); ?>" class="<?php hybrid_comment_class(); ?>">
+<li <?php comment_class(); ?> id="comment-<?php comment_ID(); ?>">
 
-	<article itemtype="http://schema.org/UserComments" class="comment-item" itemscope="itemscope" itemprop="comment">
-		<p class="comment-author" itemtype="http://schema.org/Person" itemscope="itemscope" itemprop="creator">
-			<?php echo hybrid_avatar(); ?>
-			<?php echo apply_atomic_shortcode( 'comment_author', '[comment-author]' ); ?>
+	<article <?php omega_attr( 'comment' ); ?>>
+		<p <?php omega_attr( 'comment-author' ); ?>>
+			<?php echo get_avatar( $comment, 48 ); ?>
+			<?php printf( __( '<cite class="fn">%s</cite> <span class="says">%s:</span>', 'omega' ), get_comment_author_link(), apply_filters( 'comment_author_says_text', __( 'says', 'omega' ) ) ); ?>
 		</p>
 		<p class="comment-meta"> 
-			<?php echo apply_atomic_shortcode( 'comment_meta', '[comment-published] [comment-permalink before="| "] [comment-edit-link before="| "]' ); ?>
+			<a href="<?php echo esc_url( get_comment_link( $comment->comment_ID ) ); ?>"><?php printf( __( '%1$s at %2$s', 'omega' ), get_comment_date(), get_comment_time() ); ?></a>
+				<?php edit_comment_link( __( '(Edit)', 'omega' ), '' ); ?>
 		<p>
 		<div class="comment-content">
 			<?php comment_text(); ?>
 		</div><!-- .comment-content -->
 
-		<?php echo hybrid_comment_reply_link_shortcode( array() ); ?>
+		<div class="reply">
+			<?php comment_reply_link( array_merge( $args, array( 'depth' => $depth, 'max_depth' => $args['max_depth'] ) ) ); ?>
+		</div>
+
+		<?php omega_do_atomic( 'omega_after_comment' );?>
 		
 	</article>	
 

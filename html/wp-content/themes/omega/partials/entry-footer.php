@@ -1,7 +1,6 @@
 <footer class="entry-footer">
 	<div class="entry-meta">
-		<?php
-		echo apply_atomic_shortcode( 'entry_meta', __( '[entry-terms taxonomy="category" before="Posted in: "] [entry-terms before="| Tagged: "]', 'omega' ) );
-		?>
+		<?php omega_post_terms( array( 'taxonomy' => 'category', 'text' => __( 'Posted in: %s', 'omega' ) ) ); ?>
+		<?php omega_post_terms( array( 'taxonomy' => 'post_tag', 'text' => __( 'Tagged: %s', 'omega' ), 'before' => '| ' ) ); ?>		
 	</div><!-- .entry-meta -->
 </footer>

@@ -8,7 +8,6 @@
  * override parent theme features.  Use a priority of 9 or lower if wanting to run before the parent theme.
  *
  * @package Omega
- * @subpackage Functions
  * @author ThemeHall <hello@themehall.com>
  * @copyright Copyright (c) 2013, themehall.com
  * @author Justin Tadlock <justin@justintadlock.com>
@@ -18,13 +17,12 @@
  */
 
 /* Load the core theme framework. */
-require ( trailingslashit( get_template_directory() ) . 'lib/hybrid.php' );
-new Hybrid();
+require ( trailingslashit( get_template_directory() ) . 'lib/framework.php' );
+new Omega();
 
 /* Load omega functions */
 require get_template_directory() . '/inc/omega.php';
 
-if ( ! function_exists( 'omega_theme_setup' ) ) :
 /**
  * Sets up theme defaults and registers support for various WordPress features.
  *
@@ -34,51 +32,43 @@ if ( ! function_exists( 'omega_theme_setup' ) ) :
  */
 function omega_theme_setup() {
 
-	/* Get the theme prefix. */
-	$prefix = hybrid_get_prefix();
-
 	/* The best thumbnail/image script ever. */
 	add_theme_support( 'get-the-image' );
 	
-	/* Register menus. */
-	add_theme_support( 
-		'hybrid-core-menus', 
-		array( 'primary') 
-	);
-
-	/* Register sidebars. */
-	add_theme_support( 
-		'hybrid-core-sidebars', 
-		array( 'primary' ) 
-	);
-
 	/* Load scripts. */
 	add_theme_support( 
-		'hybrid-core-scripts', 
+		'omega-scripts', 
 		array( 'comment-reply' ) 
 	);
 
 	/* Load shortcodes. */
-	add_theme_support( 'hybrid-core-shortcodes' );
+	add_theme_support( 'omega-shortcodes' );
 	
-	add_theme_support( 'hybrid-core-theme-settings', array( 'about' ) );
+	add_theme_support( 'omega-theme-settings', array( 'about' ) );
 
 	/* Enable custom template hierarchy. */
-	add_theme_support( 'hybrid-core-template-hierarchy' );
+	//add_theme_support( 'omega-template-hierarchy' );
 	
 
 	/* Enable theme layouts (need to add stylesheet support). */
 	add_theme_support( 
 		'theme-layouts', 
-		array( '1c', '2c-l', '2c-r' ), 
-		array( 'default' => '2c-l', 'customizer' => true ) 
+		array(
+			'1c'        => __( 'Content',           'omega' ),
+			'2c-l'      => __( 'Content / Sidebar', 'omega' ),
+			'2c-r'      => __( 'Sidebar / Content', 'omega' )
+		),
+		array( 'default' => is_rtl() ? '2c-r' :'2c-l', 'customizer' => true ) 
 	);
 	
 	/* Add default theme settings */
-	add_filter( "{$prefix}_default_theme_settings", 'omega_default_theme_settings');
+	add_filter( "omega_default_theme_settings", 'omega_set_default_theme_settings');
 	
 	/* implement editor styling, so as to make the editor content match the resulting post output in the theme. */
 	add_editor_style();
+
+	/* Enable responsive support */
+	add_theme_support( 'omega-deprecated' );
 
 	/* Support pagination instead of prev/next links. */
 	add_theme_support( 'loop-pagination' );	
@@ -94,21 +84,16 @@ function omega_theme_setup() {
 
 	/* Enable custom css */
 	add_theme_support( 'omega-custom-css' );
-
-	/* Enable custom footer */
-	add_theme_support( 'omega-custom-footer' );
 	
 	/* Enable custom logo */
 	add_theme_support( 'omega-custom-logo' );
 
 	/* Enable child themes page */
-	add_theme_support( 'omega-child-themes-page' );
+	add_theme_support( 'omega-child-page' );
 
-	/* Enable responsive support */
-	add_theme_support( 'omega-responsive' );
 
 	/* Handle content width for embeds and images. */
-	hybrid_set_content_width( 640 );
+	omega_set_content_width( 640 );
 
 	add_action( 'wp_enqueue_scripts', 'omega_scripts' );
 	add_action( 'wp_head', 'omega_styles' );
@@ -116,34 +101,34 @@ function omega_theme_setup() {
 	add_action( 'wp_footer', 'omega_footer_scripts' );
 
 	/* Header actions. */
-	add_action( "{$prefix}_header", 'omega_header_markup_open', 5 );
-	add_action( "{$prefix}_header", 'omega_branding' );
-	add_action( "{$prefix}_header", 'omega_header_markup_close', 15 );
+	add_action( "omega_header", 'omega_header_markup_open', 5 );
+	add_action( "omega_header", 'omega_branding' );
+	add_action( "omega_header", 'omega_header_markup_close', 15 );
 
 	/* footer insert to the footer. */
-	add_action( "{$prefix}_footer", 'omega_footer_markup_open', 5 );
-	add_action( "{$prefix}_footer", 'omega_footer_insert' );
-	add_action( "{$prefix}_footer", 'omega_footer_markup_close', 15 );
+	add_action( "omega_footer", 'omega_footer_markup_open', 5 );
+	add_action( "omega_footer", 'omega_footer_insert' );
+	add_action( "omega_footer", 'omega_footer_markup_close', 15 );
 
 	/* Load the primary menu. */
-	add_action( "{$prefix}_before_header", 'omega_get_primary_menu' );
+	add_action( "omega_before_header", 'omega_get_primary_menu' );
 
 	/* Add the title, byline, and entry meta before and after the entry.*/
-	add_action( "{$prefix}_before_entry", 'omega_entry_header' );
-	add_action( "{$prefix}_entry", 'omega_entry' );
-	add_action( "{$prefix}_singular_entry", 'omega_singular_entry' );
-	add_action( "{$prefix}_after_entry", 'omega_entry_footer' );
-	add_action( "{$prefix}_singular-page_after_entry", 'omega_page_entry_meta' );
+	add_action( "omega_before_entry", 'omega_entry_header' );
+	add_action( "omega_entry", 'omega_entry' );
+	add_action( "omega_singular_entry", 'omega_singular_entry' );
+	add_action( "omega_after_entry", 'omega_entry_footer' );
+	add_action( "omega_singular-page_after_entry", 'omega_page_entry_meta' );
 
 	/* Add the primary sidebars after the main content. */
-	add_action( "{$prefix}_after_main", 'omega_primary_sidebar' );
+	add_action( "omega_after_main", 'omega_primary_sidebar' );
 
 	/* Filter the sidebar widgets. */
 	add_filter( 'sidebars_widgets', 'omega_disable_sidebars' );
 	add_action( 'template_redirect', 'omega_one_column' );
 
 	/* Allow developers to filter the default sidebar arguments. */
-	add_filter( "{$prefix}_sidebar_defaults", 'omega_sidebar_defaults' );
+	add_filter( "omega_sidebar_defaults", 'omega_sidebar_defaults' );
 
 	add_filter( 'omega_footer_insert', 'omega_default_footer_insert' );
 
@@ -154,7 +139,6 @@ function omega_theme_setup() {
 	}
 
 }
-endif; // omega_theme_setup
 
 add_action( 'after_setup_theme', 'omega_theme_setup' );
 
@@ -164,8 +148,8 @@ function omega_sidebar_defaults($defaults) {
 	$defaults = array(
 		'before_widget' => '<section id="%1$s" class="widget %2$s widget-%2$s"><div class="widget-wrap">',
 		'after_widget'  => '</div></section>',
-		'before_title'  => '<h3 class="widget-title">',
-		'after_title'   => '</h3>'
+		'before_title'  => '<h4 class="widget-title">',
+		'after_title'   => '</h4>'
 	);
 
 	return $defaults;
@@ -180,7 +164,7 @@ function omega_sidebar_defaults($defaults) {
  * @return array $settings
  */
 
-function omega_default_theme_settings( $settings ) {
+function omega_set_default_theme_settings( $settings ) {
 
 	$settings = array(
 		'comments_pages'            => 0,
@@ -205,7 +189,7 @@ function omega_default_theme_settings( $settings ) {
 
 
 function omega_header_markup_open() {
-	echo '<header class="site-header" role="banner" itemscope="itemscope" itemtype="http://schema.org/WPHeader">';
+	echo '<header ' . omega_get_attr('header') . '>';
 }
 
 
@@ -214,7 +198,7 @@ function omega_header_markup_close() {
 }
 
 function omega_footer_markup_open() {
-	echo '<footer class="site-footer" role="contentinfo" itemscope="itemscope" itemtype="http://schema.org/WPFooter">';
+	echo '<footer ' . omega_get_attr('footer') . '>';
 }
 
 
@@ -227,7 +211,7 @@ function omega_footer_markup_close() {
  */
 function omega_branding() {
 
-	echo '<div class="' . apply_atomic( 'title_area_class', 'title-area') .'">';
+	echo '<div class="' . omega_apply_atomic( 'title_area_class', 'title-area') .'">';
 
 	/* Get the site title.  If it's not empty, wrap it with the appropriate HTML. */	
 	if ( $title = get_bloginfo( 'name' ) ) {		
@@ -238,14 +222,14 @@ function omega_branding() {
 	}
 
 	/* Display the site title and apply filters for developers to overwrite. */
-	echo apply_atomic( 'site_title', $title );
+	echo omega_apply_atomic( 'site_title', $title );
 
 	/* Get the site description.  If it's not empty, wrap it with the appropriate HTML. */
 	if ( $desc = get_bloginfo( 'description' ) )
 		$desc = sprintf( '<h2 class="site-description"><span>%1$s</span></h2>', $desc );
 
 	/* Display the site description and apply filters for developers to overwrite. */
-	echo apply_atomic( 'site_description', $desc );
+	echo omega_apply_atomic( 'site_description', $desc );
 
 	echo '</div>';
 }
@@ -256,12 +240,7 @@ function omega_branding() {
 function omega_default_footer_insert( $settings ) {
 
 	/* If there is a child theme active, use [child-link] shortcode to the $footer_insert. */
-	if ( is_child_theme() )
-		$settings = '<p class="copyright">' . __( 'Copyright &#169; [the-year] [site-link].', 'omega' ) . '</p>' . "\n\n" . '<p class="credit">' . __( 'Powered by [wp-link] and [child-link].', 'omega' ) . '</p>';
-	else
-		$settings = '<p class="copyright">' . __( 'Copyright &#169; [the-year] [site-link].', 'omega' ) . '</p>' . "\n\n" . '<p class="credit">' . __( 'Powered by [wp-link] and [theme-link].', 'omega' ) . '</p>';	
-
-	return $settings;
+	return '<p class="copyright">' . __( 'Copyright &#169; [the-year] [site-link].', 'omega' ) . '</p>' . "\n\n" . '<p class="credit">' . __( 'Theme by [author-uri].', 'omega' ) . '</p>';	
 
 }
 
@@ -273,9 +252,9 @@ function omega_footer_insert() {
 	echo '<div class="footer-content footer-insert">';
 	
 	if ( $footer_insert = get_theme_mod( 'custom_footer' ) ) {
-		echo apply_atomic_shortcode( 'footer_content', $footer_insert );		
+		echo omega_apply_atomic_shortcode( 'footer_content', $footer_insert );		
 	} else {
-		echo apply_atomic_shortcode( 'footer_content', apply_filters( 'omega_footer_insert','') );
+		echo omega_apply_atomic_shortcode( 'footer_content', apply_filters( 'omega_footer_insert','') );
 	}
 	
 	echo '</div>';
@@ -294,7 +273,7 @@ function omega_get_primary_menu() {
  */
 function omega_page_entry_meta() {
 
-	echo apply_atomic_shortcode( 'entry_meta', '<div class="entry-meta">[entry-edit-link]</div>' );
+	echo omega_apply_atomic_shortcode( 'entry_meta', '<div class="entry-meta">[post_edit]</div>' );
 }
 
 /**
@@ -334,19 +313,19 @@ function omega_entry_header() {
 function omega_entry() {
 
 	if ( is_home() || is_archive() || is_search() ) {
-		if(hybrid_get_setting( 'content_archive_thumbnail' )) {
-			get_the_image( array( 'meta_key' => 'Thumbnail', 'default_size' => hybrid_get_setting( 'image_size' ) ) ); 
+		if(omega_get_setting( 'content_archive_thumbnail' )) {
+			get_the_image( array( 'meta_key' => 'Thumbnail', 'default_size' => omega_get_setting( 'image_size' ) ) ); 
 		}
 	
 
-		if ( 'excerpts' === hybrid_get_setting( 'content_archive' ) ) {
-			if ( hybrid_get_setting( 'content_archive_limit' ) )
-				the_content_limit( (int) hybrid_get_setting( 'content_archive_limit' ), hybrid_get_setting( 'content_archive_more' ) );
+		if ( 'excerpts' === omega_get_setting( 'content_archive' ) ) {
+			if ( omega_get_setting( 'content_archive_limit' ) )
+				the_content_limit( (int) omega_get_setting( 'content_archive_limit' ), omega_get_setting( 'content_archive_more' ) );
 			else
 				the_excerpt();
 		}
 		else {
-			the_content( hybrid_get_setting( 'content_archive_more' ) );
+			the_content( omega_get_setting( 'content_archive_more' ) );
 		}
 	} 
 
@@ -354,7 +333,7 @@ function omega_entry() {
 
 
 function omega_excerpt_more( $more ) {
-	return ' ... <a class="more-link" href="'. get_permalink( get_the_ID() ) . '">' . hybrid_get_setting( 'content_archive_more' ) . '</a>';
+	return ' ... <a class="more-link" href="'. get_permalink( get_the_ID() ) . '">' . omega_get_setting( 'content_archive_more' ) . '</a>';
 }
 add_filter('excerpt_more', 'omega_excerpt_more');
 
@@ -406,7 +385,7 @@ function omega_styles() {
  */
 function omega_header_scripts() {
 
-	echo hybrid_get_setting( 'header_scripts' );
+	echo omega_get_setting( 'header_scripts' );
 
 }
 
@@ -415,7 +394,7 @@ function omega_header_scripts() {
  */
 function omega_footer_scripts() {
 
-	echo hybrid_get_setting( 'footer_scripts' );
+	echo omega_get_setting( 'footer_scripts' );
 
 }
 
@@ -455,4 +434,3 @@ function omega_disable_sidebars( $sidebars_widgets ) {
 
 	return $sidebars_widgets;
 }
-
